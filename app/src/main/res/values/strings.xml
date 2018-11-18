@@ -1,0 +1,17 @@
+<resources>
+    <string name="app_name">Gerenciador de Contas SDM</string>
+    <string name="cancel_button">Cancelar</string>
+    <string name="save_button">Salvar</string>
+    <string name="currency_textView">R$</string>
+    <string name="value_textView">Valor</string>
+    <string name="accountName_textView">Nome da conta</string>
+
+    <!-- Alert -->
+    <string name="title_alertView">Alerta</string>
+    <string name="title_alertView_cancel_message">Ao cancelar você perderá os dados preenchidos.</string>
+    <string name="error_save_title">Erro ao salvar</string>
+    <string name="error_save_message">Os campos acima são obrigatórios para a criação da conta.</string>
+    <string name="ok_button_text">Ok</string>
+    <string name="cancel_button_text">Cancelar</string>
+
+</resources>
