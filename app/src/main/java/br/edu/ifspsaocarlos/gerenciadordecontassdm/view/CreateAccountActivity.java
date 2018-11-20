@@ -1,21 +1,21 @@
 package br.edu.ifspsaocarlos.gerenciadordecontassdm.view;
 
-import android.content.ComponentName;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.text.Editable;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
 import br.edu.ifspsaocarlos.gerenciadordecontassdm.R;
+import br.edu.ifspsaocarlos.gerenciadordecontassdm.model.Account;
 
 public class CreateAccountActivity extends AppCompatActivity implements View.OnClickListener {
 
     private EditText accountNameEditText;
-    private EditText valueEditText;
+    private EditText amountEditText;
     private Button cancelButton;
     private Button saveButton;
 
@@ -26,7 +26,7 @@ public class CreateAccountActivity extends AppCompatActivity implements View.OnC
 
         // Layout reference
         accountNameEditText = findViewById(R.id.accountName);
-        valueEditText = findViewById(R.id.initialValueAccount);
+        amountEditText = findViewById(R.id.initialValueAccount);
         cancelButton = findViewById(R.id.cancelButton);
         saveButton = findViewById(R.id.saveButton);
 
@@ -43,7 +43,7 @@ public class CreateAccountActivity extends AppCompatActivity implements View.OnC
 
         // Load field values
         String name = accountNameEditText.getText().toString();
-        String value = valueEditText.getText().toString();
+        String value = amountEditText.getText().toString();
 
         switch (v.getId()) {
             case R.id.cancelButton:
@@ -88,7 +88,18 @@ public class CreateAccountActivity extends AppCompatActivity implements View.OnC
                     alertDialog.setMessage(messageError);
                     alertDialog.show();
                 } else {
+
+                    Account account = new Account();
+                    account.setName(accountNameEditText.getText().toString());
+                    account.setAmount(amountEditText.getText().toString());
+
+                    Intent resultIntent = new Intent();
+                    resultIntent.putExtra(ListaContasActivity.EXTRA_ACCOUNT, account);
+                    resultIntent.setAction(ListaContasActivity.EXTRA_ACCOUNT);
+                    setResult(RESULT_OK, resultIntent);
+
                     finish();
+                    break;
                 }
 
                 break;

@@ -5,6 +5,8 @@
     <string name="currency_textView">R$</string>
     <string name="value_textView">Valor</string>
     <string name="accountName_textView">Nome da conta</string>
+    <string name="transaction_button">Criar Transação</string>
+    <string name="total_string">TOTAL</string>
 
     <!-- Alert -->
     <string name="title_alertView">Alerta</string>
@@ -13,5 +15,9 @@
     <string name="error_save_message">Os campos acima são obrigatórios para a criação da conta.</string>
     <string name="ok_button_text">Ok</string>
     <string name="cancel_button_text">Cancelar</string>
+
+    <!-- Toast -->
+    <string name="new_account_created_message">Nova Conta adicionada!</string>
+    <string name="canceled_account_message">Cadastro cancelado!</string>
 
 </resources>
