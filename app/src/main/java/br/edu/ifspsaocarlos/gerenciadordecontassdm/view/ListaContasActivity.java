@@ -1,10 +1,14 @@
 package br.edu.ifspsaocarlos.gerenciadordecontassdm.view;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.support.annotation.Nullable;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Layout;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -17,7 +21,17 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+import com.google.gson.reflect.TypeToken;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.Serializable;
+import java.lang.reflect.Type;
+import java.lang.reflect.TypeVariable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -41,7 +55,7 @@ public class ListaContasActivity extends AppCompatActivity implements AdapterVie
 
     private View createButtonAndTotalView;
     private Button createTransactionButton;
-    private ImageView placeHolderImageView;
+    private View placeHolderImageView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,6 +73,48 @@ public class ListaContasActivity extends AppCompatActivity implements AdapterVie
 
         accountsListAdapter = new AccountsListAdapter(this, accountListArray);
         accountsListView.setAdapter(accountsListAdapter);
+        registerForContextMenu(accountsListView);
+
+        accountsListView.setOnItemClickListener(this);
+
+
+
+        SharedPreferences prefs = getSharedPreferences("Accounts", Context.MODE_PRIVATE);
+        Gson gson = new Gson();
+        String json = prefs.getString("ola", null);
+        Type type = new TypeToken<ArrayList<Account>>() {}.getType();
+        gson.fromJson(json, type);
+        Log.e("teste",json);
+
+        if (json != null) {
+            try {
+                JSONArray accountsObjects = new JSONArray(json);
+                for (int i = 0; i < accountsObjects.length(); i++) {
+                    JSONObject accountObject = new JSONObject(accountsObjects.get(i).toString());
+                    Account account = new Account(accountObject.getString("name"),accountObject.getString("amount"));
+
+                    String transactionsJson = accountObject.getString("transactions");
+                    JSONArray transactionsObjects = new JSONArray(transactionsJson);
+                    for (int j = 0; j < transactionsObjects.length(); j++) {
+                        JSONObject transactionObject = new JSONObject(transactionsObjects.get(i).toString());
+                        Transaction transaction = new Transaction();
+
+                        transaction.setAccountName(transactionObject.getString("accountName"));
+                        transaction.setValue(transactionObject.getString("value"));
+                        transaction.setCredit(transactionObject.getBoolean("isCredit"));
+                        transaction.setTransactionDate(transactionObject.getString("transactionDescription"));
+                        transaction.setTransactionDate(transactionObject.getString("transactionDate"));
+                        transaction.setTransactionType(transactionObject.getString("transactionType"));
+
+                        account.addTransaction(transaction);
+                    }
+
+                    accountListArray.add(account);
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     @Override
@@ -80,6 +136,21 @@ public class ListaContasActivity extends AppCompatActivity implements AdapterVie
         }
 
         loadTotalAmount(total.toString());
+
+        SharedPreferences prefs =  getSharedPreferences("Accounts", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        Gson gson = new Gson();
+        String json = gson.toJson(accountListArray);
+        Log.e("teste",json);
+        editor.putString("ola", json);
+        editor.apply();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+
     }
 
     // Menu methods
@@ -93,6 +164,9 @@ public class ListaContasActivity extends AppCompatActivity implements AdapterVie
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         Intent createAccountIntent = new Intent(this, CreateAccountActivity.class);
+        Bundle bundle = new Bundle();
+        bundle.putSerializable(EXTRA_ACCOUNT, (Serializable) accountListArray);
+        createAccountIntent.putExtras(bundle);
         startActivityForResult(createAccountIntent,NEW_ACCOUNT_CODE);
         return true;
     }
@@ -160,6 +234,21 @@ public class ListaContasActivity extends AppCompatActivity implements AdapterVie
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
+        Account account = accountListArray.get(position);
+        if (account.getTransactions().size() > 0) {
+            Intent accountDetailIntent = new Intent(this,AccountDetailActivity.class);
+
+            accountDetailIntent.putExtra(EXTRA_ACCOUNT, account);
+            startActivity(accountDetailIntent);
+        } else {
+            AlertDialog alertDialog = new AlertDialog.Builder(this).create();
+            String errorMessage = this.getString(R.string.empty_transactions);
+            String alertTitle = this.getString(R.string.title_alertView);
+
+            alertDialog.setTitle(alertTitle);
+            alertDialog.setMessage(errorMessage);
+            alertDialog.show();
+        }
     }
 
     @Override

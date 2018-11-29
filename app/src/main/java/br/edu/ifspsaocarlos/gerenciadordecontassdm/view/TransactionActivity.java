@@ -12,8 +12,10 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 
-import java.nio.BufferUnderflowException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import br.edu.ifspsaocarlos.gerenciadordecontassdm.R;
@@ -102,6 +104,7 @@ public class TransactionActivity extends AppCompatActivity implements View.OnCli
 
         // Check type of transaction
         String accountName = accountsSpinner.getSelectedItem().toString();
+        String transactionType = expenseTypeSpinner.getSelectedItem().toString();
         Boolean isCreditSelected = creditOption.isSelected();
         Boolean isDebitSelected = debitOption.isSelected();
         Boolean optionIsCredit = null;
@@ -179,10 +182,17 @@ public class TransactionActivity extends AppCompatActivity implements View.OnCli
                 } else {
 
                     Transaction transaction = new Transaction();
+                    transaction.setTransactionDate(getCurrentDate());
                     transaction.setAccountName(accountName);
                     transaction.setValue(amountValue);
                     transaction.setTransactionDescription(description);
                     transaction.setCredit(optionIsCredit);
+
+                    if (optionIsCredit) {
+                        transaction.setTransactionType("-");
+                    } else {
+                        transaction.setTransactionType(transactionType);
+                    }
 
                     Intent resultIntent = new Intent();
                     resultIntent.putExtra(ListaContasActivity.EXTRA_TRANSACTION, transaction);
@@ -195,5 +205,11 @@ public class TransactionActivity extends AppCompatActivity implements View.OnCli
 
                 break;
         }
+    }
+
+    public String getCurrentDate() {
+        Date currentDate = Calendar.getInstance().getTime();
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MMM-yyyy");
+        return dateFormat.format(currentDate);
     }
 }

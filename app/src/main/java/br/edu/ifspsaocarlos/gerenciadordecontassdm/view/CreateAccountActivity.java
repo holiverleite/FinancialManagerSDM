@@ -9,10 +9,17 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import br.edu.ifspsaocarlos.gerenciadordecontassdm.R;
 import br.edu.ifspsaocarlos.gerenciadordecontassdm.model.Account;
 
 public class CreateAccountActivity extends AppCompatActivity implements View.OnClickListener {
+
+    public static String EXTRA_ACCOUNT = "EXTRA_ACCOUNT";
+
+    private List<Account> accountListArray;
 
     private EditText accountNameEditText;
     private EditText amountEditText;
@@ -33,6 +40,11 @@ public class CreateAccountActivity extends AppCompatActivity implements View.OnC
         // Button Listeners
         cancelButton.setOnClickListener(this);
         saveButton.setOnClickListener(this);
+
+        // Retrieve value from activity
+        accountListArray = new ArrayList<>();
+        Intent intent = getIntent();
+        accountListArray = (List<Account>) intent.getSerializableExtra(EXTRA_ACCOUNT);
     }
 
     // Interface implementations (OnClickListener)
@@ -78,20 +90,33 @@ public class CreateAccountActivity extends AppCompatActivity implements View.OnC
 
                 break;
             case R.id.saveButton:
+
+                // Load all accounts to array
+                Boolean accountAlreadyExist = false;
+                for (Account accont : accountListArray) {
+                    if (accont.getName().equals(name)) {
+                        accountAlreadyExist = true;
+                        break;
+                    }
+                }
+
                 // Behavior if the user taps to save
-                if (name.matches("") || value.matches("")) {
+                if (name.matches("") || value.matches("") || accountAlreadyExist) {
 
                     String errorTitle = this.getString(R.string.error_save_title);
-                    String messageError = this.getString(R.string.error_save_message);
+                    String messageError = "";
+                    if (accountAlreadyExist) {
+                        messageError = this.getString(R.string.error_save_message_account_already_exist);
+                    } else {
+                        messageError = this.getString(R.string.error_save_message);
+                    }
 
                     alertDialog.setTitle(errorTitle);
                     alertDialog.setMessage(messageError);
                     alertDialog.show();
                 } else {
 
-                    Account account = new Account();
-                    account.setName(accountNameEditText.getText().toString());
-                    account.setAmount(amountEditText.getText().toString());
+                    Account account = new Account(accountNameEditText.getText().toString(),amountEditText.getText().toString());
 
                     Intent resultIntent = new Intent();
                     resultIntent.putExtra(ListaContasActivity.EXTRA_ACCOUNT, account);

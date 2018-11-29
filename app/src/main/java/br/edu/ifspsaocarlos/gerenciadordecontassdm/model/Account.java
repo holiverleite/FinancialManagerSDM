@@ -16,6 +16,7 @@ public class Account implements Serializable {
     public Account(String name, String amount) {
         this.name = name;
         this.amount = amount;
+        this.transactions = new ArrayList<>();
     }
 
     public String getName() {
@@ -35,14 +36,10 @@ public class Account implements Serializable {
     }
 
     public List<Transaction> getTransactions() {
-        return transactions;
+        return this.transactions;
     }
 
     public void addTransaction (Transaction transaction) {
-        if (this.transactions == null) {
-            this.transactions = new ArrayList<>();
-        }
-
         this.transactions.add(transaction);
     }
 

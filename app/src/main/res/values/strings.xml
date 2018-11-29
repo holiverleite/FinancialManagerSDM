@@ -4,6 +4,7 @@
     <string name="save_button">Salvar</string>
     <string name="currency_textView">Valor R$</string>
     <string name="value_textView">Valor</string>
+    <string name="empty_accounts_message">Não há contas cadastradas</string>
     <string name="accountName_textView">Nome da conta</string>
     <string name="expenseType_textView">Tipo da despesa:</string>
     <string name="transaction_button">Criar Transação</string>
@@ -19,9 +20,11 @@
     <string name="title_alertView_cancel_message">Ao cancelar você perderá os dados preenchidos.</string>
     <string name="error_save_title">Erro ao salvar</string>
     <string name="error_save_message">Os campos acima são obrigatórios para a criação da conta.</string>
+    <string name="error_save_message_account_already_exist">Já existe uma conta com esse nome, escolha outro nome.</string>
     <string name="error_save_transaction">Os campos acima são obrigatórios para a criação da transação.</string>
     <string name="ok_button_text">Ok</string>
     <string name="cancel_button_text">Cancelar</string>
+    <string name="empty_transactions">Não existem transações executadas nessa conta.</string>
 
     <!-- Toast -->
     <string name="new_account_created_message">Nova Conta adicionada!</string>

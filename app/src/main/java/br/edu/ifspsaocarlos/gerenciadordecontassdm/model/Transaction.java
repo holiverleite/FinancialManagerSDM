@@ -1,6 +1,7 @@
 package br.edu.ifspsaocarlos.gerenciadordecontassdm.model;
 
 import java.io.Serializable;
+import java.util.Date;
 
 public class Transaction implements Serializable {
 
@@ -8,13 +9,16 @@ public class Transaction implements Serializable {
     private String value;
     private Boolean isCredit;
     private String transactionDescription;
+    private String transactionDate;
+    private String transactionType;
 
     public Transaction() {}
 
-    public Transaction(String value, Boolean isCredit, String transactionDescription) {
+    public Transaction(String value, Boolean isCredit, String transactionDescription, String creationDate) {
         this.value = value;
         this.isCredit = isCredit;
         this.transactionDescription = transactionDescription;
+        this.transactionDate = creationDate;
     }
 
     public String getAccountName() {
@@ -47,5 +51,21 @@ public class Transaction implements Serializable {
 
     public void setTransactionDescription(String transactionDescription) {
         this.transactionDescription = transactionDescription;
+    }
+
+    public String getTransactionDate() {
+        return transactionDate;
+    }
+
+    public void setTransactionDate(String transactionDate) {
+        this.transactionDate = transactionDate;
+    }
+
+    public String getTransactionType() {
+        return transactionType;
+    }
+
+    public void setTransactionType(String transactionType) {
+        this.transactionType = transactionType;
     }
 }
