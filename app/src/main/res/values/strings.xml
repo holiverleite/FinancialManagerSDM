@@ -7,6 +7,7 @@
     <string name="empty_accounts_message">Não há contas cadastradas</string>
     <string name="accountName_textView">Nome da conta</string>
     <string name="expenseType_textView">Tipo da despesa:</string>
+    <string name="statement_account_type">Extrato por:</string>
     <string name="transaction_button">Criar Transação</string>
     <string name="total_string">TOTAL</string>
     <string name="create_transaction_title">Criar Transação</string>

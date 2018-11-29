@@ -90,7 +90,6 @@ public class TransactionActivity extends AppCompatActivity implements View.OnCli
         ArrayAdapter<String> spinnerExpenseType = new ArrayAdapter<>(this,R.layout.spinner_item,expensesType);
         spinnerExpenseType.setDropDownViewResource(R.layout.spinner_item);
         expenseTypeSpinner.setAdapter(spinnerExpenseType);
-
     }
 
     @Override
