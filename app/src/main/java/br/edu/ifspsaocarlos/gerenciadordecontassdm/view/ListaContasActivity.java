@@ -57,6 +57,11 @@ public class ListaContasActivity extends AppCompatActivity implements AdapterVie
     private Button createTransactionButton;
     private View placeHolderImageView;
 
+    // save values in sharepreferences
+    private SharedPreferences sharedPreferences;
+    private final String SHARED_PREFERENCES = "SHARED_PREFERENCES";
+    private final String SHARED_PREFERENCES_KEY = "sdmKey";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -77,44 +82,9 @@ public class ListaContasActivity extends AppCompatActivity implements AdapterVie
 
         accountsListView.setOnItemClickListener(this);
 
+        sharedPreferences = getSharedPreferences(SHARED_PREFERENCES, MODE_PRIVATE);
 
-
-        SharedPreferences prefs = getSharedPreferences("Accounts", Context.MODE_PRIVATE);
-        Gson gson = new Gson();
-        String json = prefs.getString("ola", null);
-        Type type = new TypeToken<ArrayList<Account>>() {}.getType();
-        gson.fromJson(json, type);
-        Log.e("teste",json);
-
-        if (json != null) {
-            try {
-                JSONArray accountsObjects = new JSONArray(json);
-                for (int i = 0; i < accountsObjects.length(); i++) {
-                    JSONObject accountObject = new JSONObject(accountsObjects.get(i).toString());
-                    Account account = new Account(accountObject.getString("name"),accountObject.getString("amount"));
-
-                    String transactionsJson = accountObject.getString("transactions");
-                    JSONArray transactionsObjects = new JSONArray(transactionsJson);
-                    for (int j = 0; j < transactionsObjects.length(); j++) {
-                        JSONObject transactionObject = new JSONObject(transactionsObjects.get(i).toString());
-                        Transaction transaction = new Transaction();
-
-                        transaction.setAccountName(transactionObject.getString("accountName"));
-                        transaction.setValue(transactionObject.getString("value"));
-                        transaction.setCredit(transactionObject.getBoolean("isCredit"));
-                        transaction.setTransactionDate(transactionObject.getString("transactionDescription"));
-                        transaction.setTransactionDate(transactionObject.getString("transactionDate"));
-                        transaction.setTransactionType(transactionObject.getString("transactionType"));
-
-                        account.addTransaction(transaction);
-                    }
-
-                    accountListArray.add(account);
-                }
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        }
+        retrieveValues();
     }
 
     @Override
@@ -137,20 +107,7 @@ public class ListaContasActivity extends AppCompatActivity implements AdapterVie
 
         loadTotalAmount(total.toString());
 
-        SharedPreferences prefs =  getSharedPreferences("Accounts", Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = prefs.edit();
-        Gson gson = new Gson();
-        String json = gson.toJson(accountListArray);
-        Log.e("teste",json);
-        editor.putString("ola", json);
-        editor.apply();
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-
-
+        saveValues();
     }
 
     // Menu methods
@@ -228,6 +185,57 @@ public class ListaContasActivity extends AppCompatActivity implements AdapterVie
         // get createButton Reference
         createTransactionButton = createButtonAndTotalView.findViewById(R.id.createTransactionButton);
         createTransactionButton.setOnClickListener(this);
+    }
+
+    protected void saveValues() {
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        Gson gson = new Gson();
+        String json = gson.toJson(accountListArray);
+        Log.v("teste","SAVE VALUES");
+        Log.v("teste",json);
+        editor.putString(SHARED_PREFERENCES_KEY, json);
+        editor.commit();
+    }
+
+    protected void retrieveValues() {
+
+        Gson gson = new Gson();
+        String json = sharedPreferences.getString(SHARED_PREFERENCES_KEY, null);
+        Type type = new TypeToken<ArrayList<Account>>() {}.getType();
+        gson.fromJson(json, type);
+
+        if (json != null) {
+            Log.v("teste","RETRIEVE VALUES");
+            Log.v("teste",json);
+            try {
+                JSONArray accountsObjects = new JSONArray(json);
+                for (int i = 0; i < accountsObjects.length(); i++) {
+                    JSONObject accountObject = new JSONObject(accountsObjects.get(i).toString());
+                    Account account = new Account(accountObject.getString("name"),accountObject.getString("amount"));
+
+                    String transactionsJson = accountObject.getString("transactions");
+                    JSONArray transactionsObjects = new JSONArray(transactionsJson);
+                    for (int j = 0; j < transactionsObjects.length(); j++) {
+
+                        JSONObject transactionObject = new JSONObject(transactionsObjects.get(j).toString());
+                        Transaction transaction = new Transaction();
+
+                        transaction.setAccountName(transactionObject.getString("accountName"));
+                        transaction.setValue(transactionObject.getString("value"));
+                        transaction.setCredit(transactionObject.getBoolean("isCredit"));
+                        transaction.setTransactionDescription(transactionObject.getString("transactionDescription"));
+                        transaction.setTransactionDate(transactionObject.getString("transactionDate"));
+                        transaction.setTransactionType(transactionObject.getString("transactionType"));
+
+                        account.addTransaction(transaction);
+                    }
+
+                    accountListArray.add(account);
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     // Interface implementations
